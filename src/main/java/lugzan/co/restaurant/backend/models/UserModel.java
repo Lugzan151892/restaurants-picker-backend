@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Entity
 public class UserModel {
@@ -40,6 +41,9 @@ public class UserModel {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String bCryptPassword = bCryptPasswordEncoder.encode(password);
+
+        this.password = bCryptPassword;
     }
 }
