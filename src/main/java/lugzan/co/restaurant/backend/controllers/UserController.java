@@ -1,6 +1,5 @@
 package lugzan.co.restaurant.backend.controllers;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import lugzan.co.restaurant.backend.models.UserModel;
 import lugzan.co.restaurant.backend.repository.UserRepository;
 import org.json.JSONObject;
