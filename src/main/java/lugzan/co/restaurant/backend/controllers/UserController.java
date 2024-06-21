@@ -2,7 +2,6 @@ package lugzan.co.restaurant.backend.controllers;
 
 import lugzan.co.restaurant.backend.models.UserModel;
 import lugzan.co.restaurant.backend.repository.UserRepository;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,9 +29,6 @@ public class UserController {
 
         ApiService apiService = new ApiService();
 
-        System.out.println(userExistEmail);
-        System.out.println(userExistName);
-
         if (userExistEmail != null) {
             apiService.setStatus(400);
             return apiService.createErrorResponse(ApiErrorMessageEnums.EXISTED_EMAIL, user.getEmail());
@@ -43,7 +39,13 @@ public class UserController {
             return apiService.createErrorResponse(ApiErrorMessageEnums.EXISTED_USERNAME, user.getUserName());
         }
 
-        userRepository.save(user);
+        String accessToken = JwtService.createJwtToken(user, user.getUserName());
+
+        System.out.println(accessToken);
+
+        System.out.println(JwtService.getTokenData(accessToken));
+
+//        userRepository.save(user);
 
         return apiService.createSuccessResponse(user);
     }
