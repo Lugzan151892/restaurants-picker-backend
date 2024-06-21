@@ -1,6 +1,5 @@
 package lugzan.co.restaurant.backend.controllers;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import lugzan.co.restaurant.backend.models.UserModel;
 import lugzan.co.restaurant.backend.repository.UserRepository;
 import org.json.JSONObject;
@@ -11,6 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
+import lugzan.co.restaurant.backend.services.*;
 
 @Controller
 @RequestMapping(path="/api/user")
@@ -19,27 +21,31 @@ public class UserController {
 
     private UserRepository userRepository;
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping(path="/add")
     public @ResponseBody String addNewUser (@RequestBody UserModel user) {
-        System.out.println(user);
+        System.out.println(user.getUserName() + " " + user.getId());
+        UserModel userExistEmail = userRepository.findByEmail(user.getEmail());
+        UserModel userExistName = userRepository.findByUserName(user.getUserName());
 
+        ApiService apiService = new ApiService();
 
-        UserModel n = new UserModel();
-        n.setUserName(user.getUserName());
-        n.setEmail(user.getEmail());
-        n.setPassword(user.getPassword());
-        userRepository.save(n);
+        System.out.println(userExistEmail);
+        System.out.println(userExistName);
 
-        JSONObject response = new JSONObject();
-        JSONObject data = new JSONObject();
+        if (userExistEmail != null) {
+            apiService.setStatus(400);
+            return apiService.createErrorResponse(ApiErrorMessageEnums.EXISTED_EMAIL, user.getEmail());
+        }
 
-        data.put("userName", n.getUserName());
-        data.put("email", n.getEmail());
-        response.put("error", false);
-        response.put("status", 200);
-        response.put("data", data);
+        if (userExistName != null) {
+            apiService.setStatus(400);
+            return apiService.createErrorResponse(ApiErrorMessageEnums.EXISTED_USERNAME, user.getUserName());
+        }
 
-        return response.toString();
+        userRepository.save(user);
+
+        return apiService.createSuccessResponse(user);
     }
 
     @GetMapping(path = "/all")
