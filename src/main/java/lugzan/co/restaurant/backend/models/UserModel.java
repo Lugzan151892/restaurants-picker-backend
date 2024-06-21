@@ -4,16 +4,26 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Table;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Entity
+@Table(name = "USERS")
 public class UserModel {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column()
     private Integer id;
+
+    @Column(unique = true)
     private String userName;
+
+    @Column()
     private String password;
+
+    @Column(unique=true)
     private String email;
 
     public Integer getId() {
@@ -36,14 +46,9 @@ public class UserModel {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public void setPassword(String password) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        String bCryptPassword = bCryptPasswordEncoder.encode(password);
 
-        this.password = bCryptPassword;
+        this.password = bCryptPasswordEncoder.encode(password);
     }
 }
