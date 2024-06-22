@@ -1,9 +1,6 @@
 package lugzan.co.restaurant.backend.controllers.user;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.HttpServletResponse;
 import lugzan.co.restaurant.backend.models.user.*;
 import lugzan.co.restaurant.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import lugzan.co.restaurant.backend.services.*;
-
-import java.util.Date;
 
 @Controller
 @RequestMapping(path="/api/user")
@@ -52,19 +47,21 @@ public class UserController {
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping(path="/login")
     public @ResponseBody String login (@RequestBody LoginRequest request) {
-        if (userRepository.findByUserName(request.getUserName()) == null) {
+        UserModel user = userRepository.findByUserName(request.getUserName());
+
+        if (user == null) {
             apiService.setStatus(400);
             return apiService.createErrorResponse(ApiErrorMessageEnums.USER_NOT_FOUND, request.getUserName());
         }
 
-        UserModel user = userRepository.findByUserName(request.getUserName());
-
+        if (!user.validatePassword(request.getPassword())) {
+            apiService.setStatus(400);
+            return apiService.createErrorResponse(ApiErrorMessageEnums.PASSWORD_INCORRECT, "");
+        }
 
         String accessToken = JwtService.createJwtToken(user, user.getUserName());
         String refreshToken = JwtService.createJwtRefreshToken(user.getEmail(), user.getUserName());
-
         user.setRefreshToken(refreshToken);
-
         userRepository.save(user);
 
         return apiService.createSuccessResponse(user.getRegistrationData(), accessToken);
@@ -73,13 +70,28 @@ public class UserController {
     @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping(path="/checkLogin")
     public @ResponseBody String checkLogin (@RequestHeader("Authorization") String token) {
-        Claims tokenData = JwtService.getTokenData(token.substring(7));
+        String subToken = token.substring(7);
+        return this.handleSuccessToken(subToken, false);
+    }
 
-        DecodedJWT jwt = JWT.decode(token);
+    @CrossOrigin(origins = "http://localhost:5173")
+    @PostMapping(path="/updateToken")
+    public @ResponseBody String updateAccessToken (@RequestBody RefreshToken refreshToken) {
+        return this.handleSuccessToken(refreshToken.getToken(), true);
+    }
 
-        if (jwt.getExpiresAt().before(new Date())) {
+    private String handleSuccessToken(String token, Boolean isRefreshToken) {
+        if (JwtService.isTokenExpired(token)) {
             apiService.setStatus(400);
             return apiService.createErrorResponse(ApiErrorMessageEnums.TOKEN_EXPIRED, "");
+        }
+
+        Claims tokenData;
+
+        if (isRefreshToken) {
+            tokenData = JwtService.getRefreshTokenData(token);
+        } else {
+            tokenData = JwtService.getTokenData(token);
         }
 
         String userName = tokenData.getSubject();
@@ -94,10 +106,6 @@ public class UserController {
 
         return apiService.createSuccessResponse(user.getAuthData(), accessToken);
     }
-
-
-
-
 
     @GetMapping(path = "/all")
     public @ResponseBody Iterable<UserModel> getAllUsers() {

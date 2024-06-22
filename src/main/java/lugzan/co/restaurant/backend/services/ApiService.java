@@ -30,6 +30,7 @@ public class ApiService {
     }
 
     public String createSuccessResponse(Object data, String accessToken) {
+        this.status = 200;
         JSONObject response = createResponse(data);
         response.put("access_token", accessToken);
         return response.toString();

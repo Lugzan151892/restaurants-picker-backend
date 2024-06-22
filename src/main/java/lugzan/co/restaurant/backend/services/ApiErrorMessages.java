@@ -16,6 +16,9 @@ public class ApiErrorMessages {
             case TOKEN_EXPIRED -> {
                 return "Token expired";
             }
+            case PASSWORD_INCORRECT -> {
+                return "Password incorrect";
+            }
             default -> {
                 return "Unexpected error occurred. Please try again.";
             }
