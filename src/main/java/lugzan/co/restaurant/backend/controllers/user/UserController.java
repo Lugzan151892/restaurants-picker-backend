@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import lugzan.co.restaurant.backend.services.*;
 
+import java.util.Objects;
+
 @Controller
 @RequestMapping(path="/api/user")
 public class UserController {
@@ -100,6 +102,11 @@ public class UserController {
         if (user == null) {
             apiService.setStatus(400);
             return apiService.createErrorResponse(ApiErrorMessageEnums.USER_NOT_FOUND, userName);
+        }
+
+        if (isRefreshToken && (!Objects.equals(user.getRefreshToken(), token))) {
+            apiService.setStatus(400);
+            return apiService.createErrorResponse(ApiErrorMessageEnums.TOKEN_INCORRECT, "");
         }
 
         String accessToken = JwtService.createJwtToken(user, user.getUserName());

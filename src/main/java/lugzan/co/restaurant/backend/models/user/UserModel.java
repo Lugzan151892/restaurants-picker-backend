@@ -58,7 +58,7 @@ public class UserModel {
         this.email = email;
     }
 
-    private String getRefreshToken() {
+    public String getRefreshToken() {
         return refreshToken;
     }
 
