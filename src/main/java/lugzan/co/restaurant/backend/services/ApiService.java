@@ -17,12 +17,21 @@ public class ApiService {
         };
     }
 
-    public String createSuccessResponse(Object data) {
+    private JSONObject createResponse(Object data) {
         JSONObject response = new JSONObject();
         response.put("error", getErrorByStatus(this.status));
         response.put("status", this.status);
         response.put("data", new JSONObject(data));
+        return response;
+    }
 
+    public String createSuccessResponse(Object data) {
+        return createResponse(data).toString();
+    }
+
+    public String createSuccessResponse(Object data, String accessToken) {
+        JSONObject response = createResponse(data);
+        response.put("access_token", accessToken);
         return response.toString();
     }
 

@@ -10,6 +10,12 @@ public class ApiErrorMessages {
             case EXISTED_USERNAME -> {
                 return "User with username " + value + " already exist";
             }
+            case USER_NOT_FOUND -> {
+                return "User with username " + value + " not found";
+            }
+            case TOKEN_EXPIRED -> {
+                return "Token expired";
+            }
             default -> {
                 return "Unexpected error occurred. Please try again.";
             }
