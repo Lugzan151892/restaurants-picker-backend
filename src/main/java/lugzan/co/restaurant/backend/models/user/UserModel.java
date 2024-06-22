@@ -7,7 +7,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Column;
 import jakarta.persistence.Table;
 import lugzan.co.restaurant.backend.controllers.user.SignUpRequest;
-import org.json.JSONObject;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Entity
@@ -15,7 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class UserModel {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column()
     private Integer id;
 
@@ -83,5 +82,10 @@ public class UserModel {
 
     public UserRegistrationModel getAuthData() {
         return new UserRegistrationModel(getId(), getUserName(), getEmail());
+    }
+
+    public Boolean validatePassword(String password) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return bCryptPasswordEncoder.matches(password, getPassword());
     }
 }

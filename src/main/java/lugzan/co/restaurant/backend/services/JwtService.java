@@ -20,7 +20,7 @@ public class JwtService {
         return Jwts.builder()
                 .claim("data", data)
                 .subject(userName)
-                .expiration(new Date(System.currentTimeMillis() + 10))
+                .expiration(new Date(System.currentTimeMillis() + millisecondsInHour * 10))
                 .signWith(getSecretKey())
                 .compact();
     }
@@ -60,5 +60,10 @@ public class JwtService {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+    static public Boolean isTokenExpired (String token) {
+        DecodedJWT jwt = JWT.decode(token);
+        return jwt.getExpiresAt().before(new Date());
     }
 }

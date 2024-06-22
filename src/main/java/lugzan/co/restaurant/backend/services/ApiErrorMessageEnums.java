@@ -5,4 +5,5 @@ public enum ApiErrorMessageEnums {
     EXISTED_USERNAME,
     USER_NOT_FOUND,
     TOKEN_EXPIRED,
+    PASSWORD_INCORRECT,
 }
