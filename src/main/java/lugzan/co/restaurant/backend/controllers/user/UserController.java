@@ -12,14 +12,13 @@ import lugzan.co.restaurant.backend.services.*;
 import java.util.Objects;
 
 @Controller
-@RequestMapping(path="/api/user")
+@RequestMapping(path="/rest/user")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
     private final ApiService apiService = new ApiService();
 
-    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping(path="/add")
     public @ResponseBody String addNewUser (@RequestBody SignUpRequest request) {
         UserModel userExistEmail = userRepository.findByEmail(request.getEmail());
@@ -46,7 +45,6 @@ public class UserController {
         return apiService.createSuccessResponse(newUser.getRegistrationData(), accessToken);
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping(path="/login")
     public @ResponseBody String login (@RequestBody LoginRequest request) {
         UserModel user = userRepository.findByUserName(request.getUserName());
@@ -69,7 +67,6 @@ public class UserController {
         return apiService.createSuccessResponse(user.getRegistrationData(), accessToken);
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping(path="/checkLogin")
     public @ResponseBody String checkLogin (@RequestHeader(value = "Authorization", required = false) String token) {
         if (token == null || token.isEmpty()) {
@@ -80,7 +77,6 @@ public class UserController {
         return this.handleSuccessToken(subToken, false);
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping(path="/updateToken")
     public @ResponseBody String updateAccessToken (@RequestBody RefreshToken refreshToken) {
         if (refreshToken.getToken() == null) {
