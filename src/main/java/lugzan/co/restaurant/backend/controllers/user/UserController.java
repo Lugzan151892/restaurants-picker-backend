@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import lugzan.co.restaurant.backend.services.*;
 
+import java.util.Objects;
+
 @Controller
 @RequestMapping(path="/api/user")
 public class UserController {
@@ -69,7 +71,11 @@ public class UserController {
 
     @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping(path="/checkLogin")
-    public @ResponseBody String checkLogin (@RequestHeader("Authorization") String token) {
+    public @ResponseBody String checkLogin (@RequestHeader(value = "Authorization", required = false) String token) {
+        if (token == null || token.isEmpty()) {
+            apiService.setStatus(400);
+            return apiService.createErrorResponse(ApiErrorMessageEnums.TOKEN_INCORRECT, "");
+        }
         String subToken = token.substring(7);
         return this.handleSuccessToken(subToken, false);
     }
@@ -77,6 +83,10 @@ public class UserController {
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping(path="/updateToken")
     public @ResponseBody String updateAccessToken (@RequestBody RefreshToken refreshToken) {
+        if (refreshToken.getToken() == null) {
+            apiService.setStatus(400);
+            return apiService.createErrorResponse(ApiErrorMessageEnums.TOKEN_INCORRECT, "");
+        }
         return this.handleSuccessToken(refreshToken.getToken(), true);
     }
 
@@ -100,6 +110,11 @@ public class UserController {
         if (user == null) {
             apiService.setStatus(400);
             return apiService.createErrorResponse(ApiErrorMessageEnums.USER_NOT_FOUND, userName);
+        }
+
+        if (isRefreshToken && (!Objects.equals(user.getRefreshToken(), token))) {
+            apiService.setStatus(400);
+            return apiService.createErrorResponse(ApiErrorMessageEnums.TOKEN_INCORRECT, "");
         }
 
         String accessToken = JwtService.createJwtToken(user, user.getUserName());
