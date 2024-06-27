@@ -1,7 +1,9 @@
 package lugzan.co.restaurant.backend.repository;
 
-import lugzan.co.restaurant.backend.models.UserModel;
-import org.springframework.data.repository.CrudRepository;
+import lugzan.co.restaurant.backend.models.user.UserModel;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends CrudRepository<UserModel, Integer> {
+public interface UserRepository extends JpaRepository<UserModel, Integer> {
+    UserModel findByEmail(String email);
+    UserModel findByUserName(String userName);
 }
