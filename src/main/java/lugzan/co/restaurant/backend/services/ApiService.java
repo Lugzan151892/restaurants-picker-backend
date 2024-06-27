@@ -44,4 +44,13 @@ public class ApiService {
 
         return response.toString();
     }
+
+    public String createMessageResponse(String message) {
+        JSONObject response = new JSONObject();
+        response.put("error", getErrorByStatus(this.status));
+        response.put("status", this.status);
+        response.put("message", message);
+
+        return response.toString();
+    }
 }
