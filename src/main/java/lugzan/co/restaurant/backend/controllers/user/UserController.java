@@ -88,7 +88,6 @@ public class UserController {
 
     @GetMapping(path="/logout")
     public @ResponseBody String logout(@RequestHeader(value = "Authorization", required = false) String token) {
-        System.out.println(token);
         if (token == null || token.isEmpty()) {
             apiService.setStatus(400);
             return apiService.createErrorResponse(ApiErrorMessageEnums.TOKEN_INCORRECT, "");
