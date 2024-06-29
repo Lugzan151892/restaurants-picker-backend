@@ -86,6 +86,36 @@ public class UserController {
         return this.handleSuccessToken(refreshToken.getToken(), true);
     }
 
+    @GetMapping(path="/logout")
+    public @ResponseBody String logout(@RequestHeader(value = "Authorization", required = false) String token) {
+        if (token == null || token.isEmpty()) {
+            apiService.setStatus(400);
+            return apiService.createErrorResponse(ApiErrorMessageEnums.TOKEN_INCORRECT, "");
+        }
+
+        String subToken = token.substring(7);
+
+        if (JwtService.isTokenExpired(subToken)) {
+            apiService.setStatus(400);
+            return apiService.createErrorResponse(ApiErrorMessageEnums.TOKEN_EXPIRED, "");
+        }
+
+        Claims tokenData = JwtService.getTokenData(subToken);
+
+        String userName = tokenData.getSubject();
+        UserModel user = userRepository.findByUserName(userName);
+
+        if (user == null) {
+            apiService.setStatus(400);
+            return apiService.createErrorResponse(ApiErrorMessageEnums.USER_NOT_FOUND, userName);
+        }
+
+        user.setRefreshToken(null);
+        userRepository.save(user);
+
+        return apiService.createMessageResponse("Successfully logout!");
+    }
+
     private String handleSuccessToken(String token, Boolean isRefreshToken) {
         if (JwtService.isTokenExpired(token)) {
             apiService.setStatus(400);
