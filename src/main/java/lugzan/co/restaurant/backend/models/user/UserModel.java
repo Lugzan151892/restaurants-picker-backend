@@ -1,13 +1,11 @@
 package lugzan.co.restaurant.backend.models.user;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lugzan.co.restaurant.backend.controllers.user.SignUpRequest;
+import lugzan.co.restaurant.backend.models.issue.IssueModel;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.List;
 
 @Entity
 @Table(name = "USERS")
@@ -29,6 +27,9 @@ public class UserModel {
 
     @Column(unique=true, name = "refresh_token")
     protected String refreshToken;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<IssueModel> created_issues;
 
     public UserModel() {}
 
@@ -68,6 +69,10 @@ public class UserModel {
 
     private String getPassword() {
         return password;
+    }
+
+    public List<IssueModel> getCreated_issues() {
+        return created_issues;
     }
 
     public void setPassword(String password) {
