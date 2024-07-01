@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface IssueRepository extends JpaRepository<IssueModel, Integer> {
     IssueModel findByTitle(String title);
     IssueModel findByUser(UserModel user);
+    IssueModel findById(int id);
 }
