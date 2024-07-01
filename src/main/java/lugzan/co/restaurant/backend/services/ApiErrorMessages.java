@@ -22,6 +22,9 @@ public class ApiErrorMessages {
             case TOKEN_INCORRECT -> {
                 return "Token incorrect";
             }
+            case ISSUE_NOT_FOUND -> {
+                return "Issue with id " + value + " not found";
+            }
             default -> {
                 return "Unexpected error occurred. Please try again.";
             }

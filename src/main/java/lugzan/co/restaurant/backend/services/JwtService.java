@@ -67,20 +67,6 @@ public class JwtService {
         return jwt.getExpiresAt().before(new Date());
     }
 
-    public static String getTokenError(String token) {
-        if (token == null || token.isEmpty()) {
-            return ApiErrorMessages.getErrorMessage(ApiErrorMessageEnums.TOKEN_INCORRECT, "");
-        }
-
-        String subToken = getSubToken(token);
-
-        if (JwtService.isTokenExpired(subToken)) {
-            return ApiErrorMessages.getErrorMessage(ApiErrorMessageEnums.TOKEN_EXPIRED, "");
-        }
-
-        return "";
-    }
-
     static public String getSubToken (String token) {
         return token.substring(7);
     }

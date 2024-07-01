@@ -7,4 +7,5 @@ public enum ApiErrorMessageEnums {
     TOKEN_EXPIRED,
     PASSWORD_INCORRECT,
     TOKEN_INCORRECT,
+    ISSUE_NOT_FOUND,
 }
