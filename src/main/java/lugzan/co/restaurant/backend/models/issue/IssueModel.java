@@ -95,4 +95,8 @@ public class IssueModel {
     public void setStatus(Integer status) {
         this.status = status;
     }
+
+    public UserModel getUser() {
+        return user;
+    }
 }
