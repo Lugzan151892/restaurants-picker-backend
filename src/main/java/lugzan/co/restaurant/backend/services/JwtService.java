@@ -66,4 +66,8 @@ public class JwtService {
         DecodedJWT jwt = JWT.decode(token);
         return jwt.getExpiresAt().before(new Date());
     }
+
+    static public String getSubToken (String token) {
+        return token.substring(7);
+    }
 }

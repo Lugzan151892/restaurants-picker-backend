@@ -17,7 +17,7 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
-    private final ApiService apiService = new ApiService();
+    private final static ApiService apiService = new ApiService();
 
     @PostMapping(path="/add")
     public @ResponseBody String addNewUser (@RequestBody SignUpRequest request) {
