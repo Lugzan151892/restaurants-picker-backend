@@ -63,7 +63,7 @@ public class IssueController {
         return apiService.createSuccessResponse(data);
     }
 
-    @PostMapping(path = "/edit/{id}")
+    @PutMapping(path = "/edit/{id}")
     public @ResponseBody String edit(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable int id, @RequestBody IssueRequest issue) {
         if (token == null || token.isEmpty()) {
             apiService.setStatus(400);
@@ -76,7 +76,7 @@ public class IssueController {
             apiService.setStatus(400);
             return apiService.createErrorResponse(ApiErrorMessageEnums.TOKEN_EXPIRED, "");
         }
-        Claims tokenData = JwtService.getTokenData(JwtService.getSubToken(subToken));
+        Claims tokenData = JwtService.getTokenData(subToken);
         String userName = tokenData.getSubject();
         UserModel user = userRepository.findByUserName(userName);
 
@@ -100,6 +100,11 @@ public class IssueController {
             return apiService.createErrorResponse(ApiErrorMessageEnums.ISSUE_NOT_FOUND, Integer.toString(id));
         }
 
+        if (user.getId() != editIssue.getUserId()) {
+            apiService.setStatus(400);
+            return apiService.createErrorResponse(ApiErrorMessageEnums.USER_NOT_ISSUE_AUTHOR, user.getUserName());
+        }
+
         editIssue.setTitle(issue.getTitle());
         editIssue.setDescription(issue.getDescription());
         editIssue.setPriority(issue.getPriority());
@@ -111,11 +116,46 @@ public class IssueController {
 
     }
 
+    @DeleteMapping(path = "/delete/{id}")
+    public @ResponseBody String delete(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable int id) {
+        if (token == null || token.isEmpty()) {
+            apiService.setStatus(400);
+            return apiService.createErrorResponse(ApiErrorMessageEnums.TOKEN_INCORRECT, "");
+        }
+
+        String subToken = token.substring(7);
+
+        if (JwtService.isTokenExpired(subToken)) {
+            apiService.setStatus(400);
+            return apiService.createErrorResponse(ApiErrorMessageEnums.TOKEN_EXPIRED, "");
+        }
+        Claims tokenData = JwtService.getTokenData(subToken);
+        String userName = tokenData.getSubject();
+        UserModel user = userRepository.findByUserName(userName);
+
+        if (user == null) {
+            apiService.setStatus(400);
+            return apiService.createErrorResponse(ApiErrorMessageEnums.USER_NOT_FOUND, userName);
+        }
+
+        IssueModel deletedIssue = issueRepository.findById(id);
+
+        if (user.getId() != deletedIssue.getUserId()) {
+            apiService.setStatus(400);
+            return apiService.createErrorResponse(ApiErrorMessageEnums.USER_NOT_ISSUE_AUTHOR, user.getUserName());
+        }
+
+        issueRepository.delete(deletedIssue);
+
+        apiService.setStatus(200);
+        return apiService.createMessageResponse("Deleted Issue " + id);
+    }
+
+
+
     @GetMapping(path = "/list")
     public @ResponseBody String list() {
         Iterable<IssueModel> issues = issueRepository.findAll();
-
-        System.out.println(issues);
 
         apiService.setStatus(200);
         return apiService.createSuccessResponse(new IssueListModel(issues));

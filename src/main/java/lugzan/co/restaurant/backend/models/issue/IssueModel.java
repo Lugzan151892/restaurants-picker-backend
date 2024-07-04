@@ -94,4 +94,8 @@ public class IssueModel {
     public void setUser(UserModel user) {
         this.user = user;
     }
+
+    public int getUserId() {
+        return user.getId();
+    }
 }

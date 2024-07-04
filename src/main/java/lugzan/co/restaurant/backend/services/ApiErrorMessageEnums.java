@@ -8,4 +8,5 @@ public enum ApiErrorMessageEnums {
     PASSWORD_INCORRECT,
     TOKEN_INCORRECT,
     ISSUE_NOT_FOUND,
+    USER_NOT_ISSUE_AUTHOR,
 }
