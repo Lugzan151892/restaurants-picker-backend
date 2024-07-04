@@ -39,7 +39,7 @@ public class IssueController {
             apiService.setStatus(400);
             return apiService.createErrorResponse(ApiErrorMessageEnums.TOKEN_EXPIRED, "");
         }
-        Claims tokenData = JwtService.getTokenData(JwtService.getSubToken(subToken));
+        Claims tokenData = JwtService.getTokenData(subToken);
         String userName = tokenData.getSubject();
         UserModel user = userRepository.findByUserName(userName);
 
@@ -114,6 +114,8 @@ public class IssueController {
     @GetMapping(path = "/list")
     public @ResponseBody String list() {
         Iterable<IssueModel> issues = issueRepository.findAll();
+
+        System.out.println(issues);
 
         apiService.setStatus(200);
         return apiService.createSuccessResponse(new IssueListModel(issues));

@@ -1,11 +1,16 @@
 package lugzan.co.restaurant.backend.models.user;
 
+import lugzan.co.restaurant.backend.models.issue.IssueModel;
+
+import java.util.List;
+
 public class UserRegistrationModel {
 
     private Integer id;
     private String userName;
     private String email;
     private String refreshToken;
+    private List<IssueModel> created_issues;
 
     public UserRegistrationModel() {}
 
@@ -16,10 +21,11 @@ public class UserRegistrationModel {
         this.refreshToken = refreshToken;
     }
 
-    public UserRegistrationModel(Integer id, String userName, String email) {
+    public UserRegistrationModel(Integer id, String userName, String email, List<IssueModel> created_issues) {
         this.id = id;
         this.userName = userName;
         this.email = email;
+        this.created_issues = created_issues;
     }
 
     public Integer getId() {
@@ -36,5 +42,9 @@ public class UserRegistrationModel {
 
     public String getRefreshToken() {
         return refreshToken;
+    }
+
+    public List<IssueModel> getCreated_issues() {
+        return created_issues;
     }
 }
