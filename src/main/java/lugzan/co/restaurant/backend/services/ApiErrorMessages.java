@@ -25,6 +25,9 @@ public class ApiErrorMessages {
             case ISSUE_NOT_FOUND -> {
                 return "Issue with id " + value + " not found";
             }
+            case USER_NOT_ISSUE_AUTHOR -> {
+                return "User with username " + value + " not issued author";
+            }
             default -> {
                 return "Unexpected error occurred. Please try again.";
             }

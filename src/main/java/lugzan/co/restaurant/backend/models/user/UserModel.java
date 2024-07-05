@@ -1,5 +1,7 @@
 package lugzan.co.restaurant.backend.models.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lugzan.co.restaurant.backend.controllers.user.SignUpRequest;
 import lugzan.co.restaurant.backend.models.issue.IssueModel;
@@ -28,7 +30,9 @@ public class UserModel {
     @Column(unique=true, name = "refresh_token")
     protected String refreshToken;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @Column
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user")
     private List<IssueModel> created_issues;
 
     public UserModel() {}
@@ -71,6 +75,10 @@ public class UserModel {
         return password;
     }
 
+    public void setCreated_issues(List<IssueModel> created_issues) {
+        this.created_issues = created_issues;
+    }
+
     public List<IssueModel> getCreated_issues() {
         return created_issues;
     }
@@ -86,7 +94,7 @@ public class UserModel {
     }
 
     public UserRegistrationModel getAuthData() {
-        return new UserRegistrationModel(getId(), getUserName(), getEmail());
+        return new UserRegistrationModel(getId(), getUserName(), getEmail(), getCreated_issues());
     }
 
     public Boolean validatePassword(String password) {
