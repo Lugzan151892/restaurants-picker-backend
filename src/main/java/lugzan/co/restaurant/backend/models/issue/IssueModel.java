@@ -1,5 +1,7 @@
 package lugzan.co.restaurant.backend.models.issue;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lugzan.co.restaurant.backend.models.user.UserModel;
 import lugzan.co.restaurant.backend.services.issue.enums.IssuePriority;
@@ -12,14 +14,6 @@ import java.util.Date;
 @Entity
 @Table (name = "ISSUES")
 public class IssueModel {
-//    id: number;
-//    title: string;
-//    description: string;
-//    priority: EISSUE_PRIORITY;
-//    created: string;
-//    status: EISSUE_STATUS;
-//    userId: number;
-
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column
@@ -41,8 +35,9 @@ public class IssueModel {
     @Column
     private Integer status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private UserModel user;
 
     public IssueModel() {}
@@ -96,7 +91,11 @@ public class IssueModel {
         this.status = status;
     }
 
-    public UserModel getUser() {
-        return user;
+    public void setUser(UserModel user) {
+        this.user = user;
+    }
+
+    public int getUserId() {
+        return user.getId();
     }
 }
