@@ -1,6 +1,7 @@
 package lugzan.co.restaurant.backend.controllers.issue;
 
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletResponse;
 import lugzan.co.restaurant.backend.models.issue.IssueCreateModel;
 import lugzan.co.restaurant.backend.models.issue.IssueListModel;
 import lugzan.co.restaurant.backend.models.issue.IssueModel;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @Controller
-@RequestMapping(path = "/rest/issue")
+@RequestMapping(path = "/rest/issue", produces = "text/plain;charset=UTF-8")
 public class IssueController {
 
     @Autowired
@@ -47,6 +48,8 @@ public class IssueController {
             apiService.setStatus(400);
             return apiService.createErrorResponse(ApiErrorMessageEnums.USER_NOT_FOUND, userName);
         }
+
+        System.out.println(issue.getTitle());
 
         if (
             issue.getTitle() == null || issue.getTitle().isEmpty()

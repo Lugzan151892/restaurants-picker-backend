@@ -12,7 +12,7 @@ import lugzan.co.restaurant.backend.services.*;
 import java.util.Objects;
 
 @Controller
-@RequestMapping(path="/rest/user")
+@RequestMapping(path="/rest/user", produces = "text/plain;charset=UTF-8")
 public class UserController {
 
     @Autowired
